@@ -78,7 +78,7 @@ function Sidebar({facets, filterProducts, filterOrders, filterSales, page }) {
         {!isShrunk && <h3>Filters</h3>}
       </div>
 
-      {!isShrunk && (
+      { false && !isShrunk && (
         <>
           <div className={styles["size-filters"]} >
             <h3>Size</h3>

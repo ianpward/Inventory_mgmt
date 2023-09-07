@@ -313,7 +313,8 @@ export async function getServerSideProps({ query }) {
     const searchQuery = query.q || '';
 
     let products;
-    if (searchQuery) {
+
+    if (searchQuery && false) {
       const searchAgg = [
         {
           $search: {
@@ -330,33 +331,35 @@ export async function getServerSideProps({ query }) {
           },
         },
       ];
-
+      console.log("making call", db)
       products = await db.collection("products").aggregate(searchAgg).toArray();
     } else {
+      console.log("making call", db)
       products = await db.collection("products").find({}).toArray();
     }
 
-    const agg = [
-      {
-        $searchMeta: {
-          index: "facets",
-          facet: {
-            facets: {
-              colorsFacet: { type: "string", path: "color.name", numBuckets: 20 },
-              sizesFacet: { type: "string", path: "items.size" },
-            },
-          },
-        },
-      },
-    ];
+    // const agg = [
+    //   {
+    //     $searchMeta: {
+    //       index: "facets",
+    //       facet: {
+    //         facets: {
+    //           colorsFacet: { type: "string", path: "color.name", numBuckets: 20 },
+    //           sizesFacet: { type: "string", path: "items.size" },
+    //         },
+    //       },
+    //     },
+    //   },
+    // ];
 
-    const facets = await db
-      .collection("products")
-      .aggregate(agg)
-      .toArray();
+    // const facets = await db
+    //   .collection("products")
+    //   .aggregate(agg)
+    //   .toArray();
 
+    console.log("***YOU ARE HERE", realmAppId)
     return {
-      props: { products: JSON.parse(JSON.stringify(products)), facets: JSON.parse(JSON.stringify(facets)), realmAppId: realmAppId, databaseName: dbName },
+      props: { products: JSON.parse(JSON.stringify(products)), facets: [], realmAppId: realmAppId, databaseName: dbName },
     };
   } catch (e) {
     console.error(e);
