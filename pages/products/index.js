@@ -16,7 +16,7 @@ export default function Products({ products, facets, realmAppId, databaseName })
    const [alerts, setAlerts] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(null);
-  const  app = new  Realm.App({ id: realmAppId });
+  const  app = new  Realm.App({ id: "inventory-seshp" });
  
   
   // Create a ref for the input element
@@ -32,7 +32,7 @@ export default function Products({ products, facets, realmAppId, databaseName })
         
       await app.logIn(Realm.Credentials.anonymous());
       const mongodb = app.currentUser.mongoClient("mongodb-atlas");
-      const collection = mongodb.db(databaseName).collection("products");
+      const collection = mongodb.db("inventory_management").collection("products");
       let updatedProduct = null;
       
       for await (const  change  of  collection.watch()) {
