@@ -35,7 +35,7 @@ export default function Products({ products, facets, realmAppId, databaseName })
       const mongodb = app.currentUser.mongoClient("mongodb-atlas");
       const collection = mongodb.db("inventory_management").collection("products");
       let updatedProduct = null;
-      /*
+      
       for await (const  change  of  collection.watch()) {
         updatedProduct = change.fullDocument;
         updatedProduct._id = updatedProduct._id.toString();
@@ -60,7 +60,7 @@ export default function Products({ products, facets, realmAppId, databaseName })
         }
 
       }
-      */
+      
     }
     
     login();
