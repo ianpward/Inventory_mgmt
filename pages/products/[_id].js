@@ -195,14 +195,13 @@ export async function getServerSideProps(context) {
         const { req, params } = context;
         const client = await clientPromise;
         const db = client.db(dbName);
-        console.log("IN getServersideProps " + dbName)
-        console.log("PRINT _id " + JSON.stringify(params._id))
+        console.log("Print Product _id " + JSON.stringify(params._id))
 
         const product = await db
             .collection("products")
             .find({ _id: ObjectId(params._id)}).toArray();
         const productHolder = JSON.parse(JSON.stringify(product[0]))
-        console.log("PRINT PRODUCTHOLDER " + productHolder)
+        console.log("Print Product name " + productHolder.name)
 
         return {
             props: { preloadedProduct: JSON.parse(JSON.stringify(productHolder)), realmAppId: realmAppId, baseUrl: baseUrl, dashboardId: dashboardId, databaseName: dbName },

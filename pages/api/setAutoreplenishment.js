@@ -13,16 +13,14 @@ export default async (req, res) => {
 
         const active  = req.body;
         const productId = req.query.product_id;
-      //  console.log(productPrice);
+
       const product = await db
             .collection("products")
             .find({ _id: ObjectId(productId)}).toArray();
         const productHolder = JSON.parse(JSON.stringify(product[0]));
         const price = productHolder.price;
 
-        console.log(price.amount);
         const newPrice = price.amount-5;
-        console.log(newPrice);
 
 
         await db.collection("products").updateOne(
@@ -36,7 +34,7 @@ export default async (req, res) => {
             }
         );
 
-        console.log("DONE" + newPrice);
+        console.log("Price Updated to " + newPrice);
         res.status(200).json({ success: true });
     } catch (e) {
         console.error(e);
