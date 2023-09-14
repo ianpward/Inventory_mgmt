@@ -13,18 +13,30 @@ export default async (req, res) => {
 
         const active  = req.body;
         const productId = req.query.product_id;
+      //  console.log(productPrice);
+      const product = await db
+            .collection("products")
+            .find({ _id: ObjectId(productId)}).toArray();
+        const productHolder = JSON.parse(JSON.stringify(product[0]));
+        const price = productHolder.price;
+
+        console.log(price.amount);
+        const newPrice = price.amount-5;
+        console.log(newPrice);
+
 
         await db.collection("products").updateOne(
             {
-                "_id": new ObjectId(productId)
+                _id: ObjectId(productId)
             },
-            [{
+            {
                 $set: {
-                    "autoreplenishment": active
+                    "price.amount": newPrice
                 }
-            }]
+            }
         );
-            
+
+        console.log("DONE" + newPrice);
         res.status(200).json({ success: true });
     } catch (e) {
         console.error(e);

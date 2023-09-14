@@ -31,7 +31,7 @@ export default function Products({ products, facets, realmAppId, databaseName })
     const  login = async () => {
         
       await app.logIn(Realm.Credentials.anonymous());
-
+/*
       const mongodb = app.currentUser.mongoClient("mongodb-atlas");
       const collection = mongodb.db("inventory_management").collection("products");
       let updatedProduct = null;
@@ -60,6 +60,8 @@ export default function Products({ products, facets, realmAppId, databaseName })
         }
 
       }
+      */
+      
       
     }
     

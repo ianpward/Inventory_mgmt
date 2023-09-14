@@ -16,7 +16,7 @@ export default function Product({ preloadedProduct, realmAppId, baseUrl, dashboa
     const [product, setProduct] = useState(preloadedProduct);
     const [showPopup, setShowPopup] = useState(false);
     const [saveSuccessMessage, setSaveSuccessMessage] = useState(false);
-    const  app = new  Realm.App({ id: realmAppId });
+    const  app = new  Realm.App({ id: "inventory-seshp" });
 
     const lightColors = [
         '#B1FF05','#E9FF99','#B45AF2','#F2C5EE',
@@ -45,6 +45,7 @@ export default function Product({ preloadedProduct, realmAppId, baseUrl, dashboa
         const  login = async () => {
         
             await app.logIn(Realm.Credentials.anonymous());
+            /*
             const mongodb = app.currentUser.mongoClient("mongodb-atlas");
             const collection = mongodb.db(databaseName).collection("products");
             let updatedProduct = null;
@@ -57,13 +58,17 @@ export default function Product({ preloadedProduct, realmAppId, baseUrl, dashboa
                     setProduct(updatedProduct);
                 }
             }
+            */
         }
+        
         login();
     }, []);
 
-    const handleOpenPopup = () => {
+    const  handleOpenPopup =  () => {
         setShowPopup(true);
     };
+
+
 
     const handleClosePopup = () => {
         setShowPopup(false);
@@ -150,7 +155,7 @@ export default function Product({ preloadedProduct, realmAppId, baseUrl, dashboa
                 <span className={`${styles["circle"]} ${styles["low"]}`}></span> <span>Low</span> &nbsp;&nbsp;
                 <span className={`${styles["circle"]} ${styles["ordered"]}`}></span> <span>Ordered</span>
             </div>
-            <button onClick={handleOpenPopup}>REPLENISH STOCK</button>
+            <button onClick={handleToggleAutoreplenishment}>FLASH SALE</button>
             </div>
         </div>
         <div className={styles["dashboard"]} ref={dashboardDiv}/>
@@ -190,13 +195,17 @@ export async function getServerSideProps(context) {
         const { req, params } = context;
         const client = await clientPromise;
         const db = client.db(dbName);
+        console.log("IN getServersideProps " + dbName)
+        console.log("PRINT _id " + JSON.stringify(params._id))
 
         const product = await db
             .collection("products")
-            .findOne({ _id: ObjectId(params._id)});
+            .find({ _id: ObjectId(params._id)}).toArray();
+        const productHolder = JSON.parse(JSON.stringify(product[0]))
+        console.log("PRINT PRODUCTHOLDER " + productHolder)
 
         return {
-            props: { preloadedProduct: JSON.parse(JSON.stringify(product)), realmAppId: realmAppId, baseUrl: baseUrl, dashboardId: dashboardId, databaseName: dbName },
+            props: { preloadedProduct: JSON.parse(JSON.stringify(productHolder)), realmAppId: realmAppId, baseUrl: baseUrl, dashboardId: dashboardId, databaseName: dbName },
         };
     } catch (e) {
         console.error(e);

@@ -32,12 +32,12 @@ export default async (req, res) => {
             readPreference: 'primary'
           };
 
-        const session = client.startSession();
+     //   const session = client.startSession();
         
         try{
-            session.startTransaction(transactionOptions);
+       //     session.startTransaction(transactionOptions);
 
-            insertOrderResponse = await db.collection("orders").insertOne(order, { session });
+            insertOrderResponse = await db.collection("orders").insertOne(order);
 
             for (let i = 0; i < order.items?.length; i++) {
                 let item = order.items[i];
@@ -58,24 +58,26 @@ export default async (req, res) => {
                     }
                     },
                     {
+                        
                     arrayFilters: [
                         { "i.sku": sku },
                         { "j.location": "warehouse" },
                         { "k.location": "ordered" }
                     ],
-                     session 
+                    
+                     //session 
                     }
                 );
             }
-            await session.commitTransaction();
+      //      await session.commitTransaction();
             console.log('Transaction successfully committed.');
         }
         catch(e){
             console.log('An error occured in the transaction, performing a data rollback:' + e);
-            await session.abortTransaction();
+       //     await session.abortTransaction();
         }
         finally{
-            await session.endSession();
+       //     await session.endSession();
         }
         res.status(200).json({ success: true, orderId: insertOrderResponse.insertedId });
     } catch (e) {

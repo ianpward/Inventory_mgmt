@@ -24,7 +24,7 @@ export default async (req, res) => {
                         'total_stock_sum': product.total_stock_sum
                     } 
                 },
-                arrayFilters: [{ 'i.sku': item.sku }],
+             //   arrayFilters: [{ 'i.sku': item.sku }],
             },
         }));
         
