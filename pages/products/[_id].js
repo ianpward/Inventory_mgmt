@@ -43,6 +43,7 @@ export default function Product({ preloadedProduct, realmAppId, baseUrl, dashboa
 
     useEffect(() => {
         const  login = async () => {
+            /*
         
             await app.logIn(Realm.Credentials.anonymous());
             const mongodb = app.currentUser.mongoClient("mongodb-atlas");
@@ -57,6 +58,7 @@ export default function Product({ preloadedProduct, realmAppId, baseUrl, dashboa
                     setProduct(updatedProduct);
                 }
             }
+            */
         }
         login();
     }, []);
