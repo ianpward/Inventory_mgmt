@@ -1,6 +1,7 @@
 import { MongoClient } from 'mongodb';
 import clientPromise from '../../lib/mongodb';
 import { random } from 'lodash';
+import { ObjectId } from "bson"
 
 if (!process.env.MONGODB_DATABASE_NAME) {
   throw new Error('Invalid/Missing environment variables: "MONGODB_DATABASE_NAME"')
@@ -12,7 +13,11 @@ const collectionName = 'products';
 async function performSale(productsCollection, salesCollection, color, size, quantity) {
   console.log(`Performing sale: Color: ${color}, Size: ${size}, Quantity: ${quantity}`);
 
-  const product = await productsCollection.findOne({ 'color.name': color, 'items.size': size });
+ // const product = await productsCollection.findOne({ 'color.name': color, 'items.size': size });
+
+  const productColor = await productsCollection
+  .find({ 'color.name': color, 'items.size': size }).toArray();
+const product= JSON.parse(JSON.stringify(productColor[0]))
 
   if (!product) {
     return { message: `Product with color '${color}' and size '${size}' not found.` };
@@ -29,6 +34,45 @@ async function performSale(productsCollection, salesCollection, color, size, qua
   if (availableStock < quantity || availableTotalStock < quantity) {
     return { message: `Insufficient stock for color '${color}' and size '${size}'. Available stock: ${availableStock}` };
   }
+/*
+  const productArray = await productsCollection
+            .find({ _id: ObjectId(product._id)}).toArray();
+        const productHolder = JSON.parse(JSON.stringify(productArray[0]))
+        console.log("PRODUCT HOLDER  " + JSON.stringify(productHolder));
+
+  for (var i = 0; i < productHolder.items.length; i++) { 
+    if(productHolder.items[i].size == size){
+      console.log("PRODUCT ITEMS  " + productHolder.items[i]);
+      for(var j =0; j < productHolder.items[i].stock.length; j++)
+      {
+        console.log("HERE");
+        if(productHolder.items[i].stock[j].location == 'store' ){
+          console.log("PRODUCT STOCK  " + productHolder.items[i].stock[j]);
+          for(var k=0; k <productHolder.total_stock_sum.length; k++) {
+            
+          if(productHolder.total_stock_sum[k].location =='store'){
+            console.log("PRODUCT TOTAL STOCK  " + productHolder.total_stock_sum[k]);
+      await productsCollection.updateOne(
+        {
+          _id: product._id,
+          'color.name': color,
+          'items.size': size,
+          'items.stock.location': 'store',
+        },
+        {
+          $inc: {
+            'items.$[i].stock.$[j].amount': -quantity,
+            'total_stock_sum.$[k].amount': -quantity,
+          }
+        }
+              )
+      }
+      }
+      }
+    }
+  }
+  }
+*/
 
   await productsCollection.updateOne(
     {
@@ -54,7 +98,7 @@ async function performSale(productsCollection, salesCollection, color, size, qua
 
   // Save the sales data to the new collection
   const saleData = {
-    product_id: product._id,
+    product_id: ObjectId(product._id),
     name: product.name,
     color: {
       name: color,
@@ -63,7 +107,7 @@ async function performSale(productsCollection, salesCollection, color, size, qua
     size: size,
     sku: sizeItem.sku,
     quantity: quantity,
-    channel: random(0, 1) ? 'online' : 'in-store', // Generate a random value of either 'online' or 'in-store'
+    channel: 'in-store', // Generate a random value of either 'online' or 'in-store'
     timestamp: new Date(),
   };
   await salesCollection.insertOne(saleData);
