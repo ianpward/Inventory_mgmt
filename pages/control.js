@@ -54,6 +54,7 @@ export default function Control({ preloadedProducts, realmAppId, databaseName })
         const  login = async () => {
         
             await app.logIn(Realm.Credentials.anonymous());
+            /*
             const mongodb = app.currentUser.mongoClient("mongodb-atlas");
             const collection = mongodb.db(databaseName).collection("products");
 
@@ -73,6 +74,7 @@ export default function Control({ preloadedProducts, realmAppId, databaseName })
                     }
                 });
             }
+            */
         }
         login();
     }, []);
